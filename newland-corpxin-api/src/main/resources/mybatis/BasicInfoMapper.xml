@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.newland.corpxin.mapper.BasicInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.newland.corpxin.model.BasicInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ent_name" property="entName" jdbcType="VARCHAR" />
+    <result column="legal_person" property="legalPerson" jdbcType="VARCHAR" />
+    <result column="open_status" property="openStatus" jdbcType="VARCHAR" />
+    <result column="reg_capital" property="regCapital" jdbcType="VARCHAR" />
+    <result column="real_capital" property="realCapital" jdbcType="VARCHAR" />
+    <result column="industry" property="industry" jdbcType="VARCHAR" />
+    <result column="unified_code" property="unifiedCode" jdbcType="VARCHAR" />
+    <result column="tax_no" property="taxNo" jdbcType="VARCHAR" />
+    <result column="license_number" property="licenseNumber" jdbcType="VARCHAR" />
+    <result column="org_no" property="orgNo" jdbcType="VARCHAR" />
+    <result column="authority" property="authority" jdbcType="VARCHAR" />
+    <result column="start_date" property="startDate" jdbcType="VARCHAR" />
+    <result column="ent_type" property="entType" jdbcType="VARCHAR" />
+    <result column="open_start" property="openStart" jdbcType="VARCHAR" />
+    <result column="open_end" property="openEnd" jdbcType="VARCHAR" />
+    <result column="district" property="district" jdbcType="VARCHAR" />
+    <result column="annual_date" property="annualDate" jdbcType="VARCHAR" />
+    <result column="reg_addr" property="regAddr" jdbcType="VARCHAR" />
+    <result column="scope" property="scope" jdbcType="VARCHAR" />
+    <result column="end_date" property="endDate" jdbcType="VARCHAR" />
+    <result column="last_update_timestamp" property="lastUpdateTimestamp" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, ent_name, legal_person, open_status, reg_capital, real_capital, industry, unified_code,
+    tax_no, license_number, org_no, authority, start_date, ent_type, open_start, open_end,
+    district, annual_date, reg_addr, scope, end_date, last_update_timestamp
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.newland.corpxin.model.BasicInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ads_company_basicinfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from ads_company_basicinfo
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ads_company_basicinfo
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.newland.corpxin.model.BasicInfoExample" >
+    delete from ads_company_basicinfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.newland.corpxin.model.BasicInfo" >
+    insert into ads_company_basicinfo (id, ent_name, legal_person,
+    open_status, reg_capital, real_capital,
+    industry, unified_code, tax_no,
+    license_number, org_no, authority,
+    start_date, ent_type, open_start,
+    open_end, district, annual_date,
+    reg_addr, scope, end_date,
+    last_update_timestamp)
+    values (#{id,jdbcType=INTEGER}, #{entName,jdbcType=VARCHAR}, #{legalPerson,jdbcType=VARCHAR},
+    #{openStatus,jdbcType=VARCHAR}, #{regCapital,jdbcType=VARCHAR}, #{realCapital,jdbcType=VARCHAR},
+    #{industry,jdbcType=VARCHAR}, #{unifiedCode,jdbcType=VARCHAR}, #{taxNo,jdbcType=VARCHAR},
+    #{licenseNumber,jdbcType=VARCHAR}, #{orgNo,jdbcType=VARCHAR}, #{authority,jdbcType=VARCHAR},
+    #{startDate,jdbcType=VARCHAR}, #{entType,jdbcType=VARCHAR}, #{openStart,jdbcType=VARCHAR},
+    #{openEnd,jdbcType=VARCHAR}, #{district,jdbcType=VARCHAR}, #{annualDate,jdbcType=VARCHAR},
+    #{regAddr,jdbcType=VARCHAR}, #{scope,jdbcType=VARCHAR}, #{endDate,jdbcType=VARCHAR},
+    #{lastUpdateTimestamp,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.newland.corpxin.model.BasicInfo" >
+    insert into ads_company_basicinfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="entName != null" >
+        ent_name,
+      </if>
+      <if test="legalPerson != null" >
+        legal_person,
+      </if>
+      <if test="openStatus != null" >
+        open_status,
+      </if>
+      <if test="regCapital != null" >
+        reg_capital,
+      </if>
+      <if test="realCapital != null" >
+        real_capital,
+      </if>
+      <if test="industry != null" >
+        industry,
+      </if>
+      <if test="unifiedCode != null" >
+        unified_code,
+      </if>
+      <if test="taxNo != null" >
+        tax_no,
+      </if>
+      <if test="licenseNumber != null" >
+        license_number,
+      </if>
+      <if test="orgNo != null" >
+        org_no,
+      </if>
+      <if test="authority != null" >
+        authority,
+      </if>
+      <if test="startDate != null" >
+        start_date,
+      </if>
+      <if test="entType != null" >
+        ent_type,
+      </if>
+      <if test="openStart != null" >
+        open_start,
+      </if>
+      <if test="openEnd != null" >
+        open_end,
+      </if>
+      <if test="district != null" >
+        district,
+      </if>
+      <if test="annualDate != null" >
+        annual_date,
+      </if>
+      <if test="regAddr != null" >
+        reg_addr,
+      </if>
+      <if test="scope != null" >
+        scope,
+      </if>
+      <if test="endDate != null" >
+        end_date,
+      </if>
+      <if test="lastUpdateTimestamp != null" >
+        last_update_timestamp,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="entName != null" >
+        #{entName,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPerson != null" >
+        #{legalPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="openStatus != null" >
+        #{openStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="regCapital != null" >
+        #{regCapital,jdbcType=VARCHAR},
+      </if>
+      <if test="realCapital != null" >
+        #{realCapital,jdbcType=VARCHAR},
+      </if>
+      <if test="industry != null" >
+        #{industry,jdbcType=VARCHAR},
+      </if>
+      <if test="unifiedCode != null" >
+        #{unifiedCode,jdbcType=VARCHAR},
+      </if>
+      <if test="taxNo != null" >
+        #{taxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseNumber != null" >
+        #{licenseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="orgNo != null" >
+        #{orgNo,jdbcType=VARCHAR},
+      </if>
+      <if test="authority != null" >
+        #{authority,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null" >
+        #{startDate,jdbcType=VARCHAR},
+      </if>
+      <if test="entType != null" >
+        #{entType,jdbcType=VARCHAR},
+      </if>
+      <if test="openStart != null" >
+        #{openStart,jdbcType=VARCHAR},
+      </if>
+      <if test="openEnd != null" >
+        #{openEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="district != null" >
+        #{district,jdbcType=VARCHAR},
+      </if>
+      <if test="annualDate != null" >
+        #{annualDate,jdbcType=VARCHAR},
+      </if>
+      <if test="regAddr != null" >
+        #{regAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="scope != null" >
+        #{scope,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTimestamp != null" >
+        #{lastUpdateTimestamp,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.newland.corpxin.model.BasicInfoExample" resultType="java.lang.Integer" >
+    select count(*) from ads_company_basicinfo
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ads_company_basicinfo
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.entName != null" >
+        ent_name = #{record.entName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.legalPerson != null" >
+        legal_person = #{record.legalPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openStatus != null" >
+        open_status = #{record.openStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.regCapital != null" >
+        reg_capital = #{record.regCapital,jdbcType=VARCHAR},
+      </if>
+      <if test="record.realCapital != null" >
+        real_capital = #{record.realCapital,jdbcType=VARCHAR},
+      </if>
+      <if test="record.industry != null" >
+        industry = #{record.industry,jdbcType=VARCHAR},
+      </if>
+      <if test="record.unifiedCode != null" >
+        unified_code = #{record.unifiedCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taxNo != null" >
+        tax_no = #{record.taxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.licenseNumber != null" >
+        license_number = #{record.licenseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orgNo != null" >
+        org_no = #{record.orgNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.authority != null" >
+        authority = #{record.authority,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startDate != null" >
+        start_date = #{record.startDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.entType != null" >
+        ent_type = #{record.entType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openStart != null" >
+        open_start = #{record.openStart,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openEnd != null" >
+        open_end = #{record.openEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="record.district != null" >
+        district = #{record.district,jdbcType=VARCHAR},
+      </if>
+      <if test="record.annualDate != null" >
+        annual_date = #{record.annualDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.regAddr != null" >
+        reg_addr = #{record.regAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scope != null" >
+        scope = #{record.scope,jdbcType=VARCHAR},
+      </if>
+      <if test="record.endDate != null" >
+        end_date = #{record.endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lastUpdateTimestamp != null" >
+        last_update_timestamp = #{record.lastUpdateTimestamp,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ads_company_basicinfo
+    set id = #{record.id,jdbcType=INTEGER},
+    ent_name = #{record.entName,jdbcType=VARCHAR},
+    legal_person = #{record.legalPerson,jdbcType=VARCHAR},
+    open_status = #{record.openStatus,jdbcType=VARCHAR},
+    reg_capital = #{record.regCapital,jdbcType=VARCHAR},
+    real_capital = #{record.realCapital,jdbcType=VARCHAR},
+    industry = #{record.industry,jdbcType=VARCHAR},
+    unified_code = #{record.unifiedCode,jdbcType=VARCHAR},
+    tax_no = #{record.taxNo,jdbcType=VARCHAR},
+    license_number = #{record.licenseNumber,jdbcType=VARCHAR},
+    org_no = #{record.orgNo,jdbcType=VARCHAR},
+    authority = #{record.authority,jdbcType=VARCHAR},
+    start_date = #{record.startDate,jdbcType=VARCHAR},
+    ent_type = #{record.entType,jdbcType=VARCHAR},
+    open_start = #{record.openStart,jdbcType=VARCHAR},
+    open_end = #{record.openEnd,jdbcType=VARCHAR},
+    district = #{record.district,jdbcType=VARCHAR},
+    annual_date = #{record.annualDate,jdbcType=VARCHAR},
+    reg_addr = #{record.regAddr,jdbcType=VARCHAR},
+    scope = #{record.scope,jdbcType=VARCHAR},
+    end_date = #{record.endDate,jdbcType=VARCHAR},
+    last_update_timestamp = #{record.lastUpdateTimestamp,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.newland.corpxin.model.BasicInfo" >
+    update ads_company_basicinfo
+    <set >
+      <if test="entName != null" >
+        ent_name = #{entName,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPerson != null" >
+        legal_person = #{legalPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="openStatus != null" >
+        open_status = #{openStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="regCapital != null" >
+        reg_capital = #{regCapital,jdbcType=VARCHAR},
+      </if>
+      <if test="realCapital != null" >
+        real_capital = #{realCapital,jdbcType=VARCHAR},
+      </if>
+      <if test="industry != null" >
+        industry = #{industry,jdbcType=VARCHAR},
+      </if>
+      <if test="unifiedCode != null" >
+        unified_code = #{unifiedCode,jdbcType=VARCHAR},
+      </if>
+      <if test="taxNo != null" >
+        tax_no = #{taxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseNumber != null" >
+        license_number = #{licenseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="orgNo != null" >
+        org_no = #{orgNo,jdbcType=VARCHAR},
+      </if>
+      <if test="authority != null" >
+        authority = #{authority,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null" >
+        start_date = #{startDate,jdbcType=VARCHAR},
+      </if>
+      <if test="entType != null" >
+        ent_type = #{entType,jdbcType=VARCHAR},
+      </if>
+      <if test="openStart != null" >
+        open_start = #{openStart,jdbcType=VARCHAR},
+      </if>
+      <if test="openEnd != null" >
+        open_end = #{openEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="district != null" >
+        district = #{district,jdbcType=VARCHAR},
+      </if>
+      <if test="annualDate != null" >
+        annual_date = #{annualDate,jdbcType=VARCHAR},
+      </if>
+      <if test="regAddr != null" >
+        reg_addr = #{regAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="scope != null" >
+        scope = #{scope,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null" >
+        end_date = #{endDate,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTimestamp != null" >
+        last_update_timestamp = #{lastUpdateTimestamp,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.newland.corpxin.model.BasicInfo" >
+    update ads_company_basicinfo
+    set ent_name = #{entName,jdbcType=VARCHAR},
+      legal_person = #{legalPerson,jdbcType=VARCHAR},
+      open_status = #{openStatus,jdbcType=VARCHAR},
+      reg_capital = #{regCapital,jdbcType=VARCHAR},
+      real_capital = #{realCapital,jdbcType=VARCHAR},
+      industry = #{industry,jdbcType=VARCHAR},
+      unified_code = #{unifiedCode,jdbcType=VARCHAR},
+      tax_no = #{taxNo,jdbcType=VARCHAR},
+      license_number = #{licenseNumber,jdbcType=VARCHAR},
+      org_no = #{orgNo,jdbcType=VARCHAR},
+      authority = #{authority,jdbcType=VARCHAR},
+      start_date = #{startDate,jdbcType=VARCHAR},
+      ent_type = #{entType,jdbcType=VARCHAR},
+      open_start = #{openStart,jdbcType=VARCHAR},
+      open_end = #{openEnd,jdbcType=VARCHAR},
+      district = #{district,jdbcType=VARCHAR},
+      annual_date = #{annualDate,jdbcType=VARCHAR},
+      reg_addr = #{regAddr,jdbcType=VARCHAR},
+      scope = #{scope,jdbcType=VARCHAR},
+      end_date = #{endDate,jdbcType=VARCHAR},
+      last_update_timestamp = #{lastUpdateTimestamp,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByUnifiedCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from ads_company_basicinfo
+    where unified_code = #{unifiedCode,jdbcType=INTEGER}
+  </select>
+</mapper>
