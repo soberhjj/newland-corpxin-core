@@ -13,7 +13,6 @@ import com.newland.corpxin.model.BasicData;
 import com.newland.corpxin.model.BasicInfo;
 import com.newland.corpxin.service.MysqlService;
 import com.newland.corpxin.util.*;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -33,6 +32,8 @@ import com.newland.corpxin.conf.Configuration;
 import com.newland.corpxin.conf.SqlConstant;
 import com.newland.corpxin.model.Offset;
 import com.newland.corpxin.service.OffsetQueryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 实时流处理入口
@@ -40,10 +41,11 @@ import com.newland.corpxin.service.OffsetQueryService;
  * @author Administrator
  *
  */
-@Slf4j
+
 public class Main implements Tool,Serializable {
 
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
 	public static void main(String[] args) throws Exception{
 		ToolRunner.run(new Main(), args);
@@ -65,12 +67,12 @@ public class Main implements Tool,Serializable {
 		// 构建kafka参数
 		Map<String, Object> kafkaParams = buildKafkaParameters(conf);
 		if (offsets == null || offsets.isEmpty()) {
-			log.info(String.format("topic[%s] consumer[%s] not found consumer record", conf.getTopic(), conf.getGroupId()));
+			LOG.info(String.format("topic[%s] consumer[%s] not found consumer record", conf.getTopic(), conf.getGroupId()));
 			stream = KafkaUtils.createDirectStream(jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(Arrays.asList(conf.getTopic()), kafkaParams));
 		} else {
 			Map<TopicPartition, Long> fromOffsets = new HashMap<TopicPartition, Long>();
 			for (Offset offset : offsets) {
-				log.info(String.format("topic[%s] consumer[%s] partition[%s] offset[%s]", offset.getTopic(), conf.getGroupId(), offset.getPartition(), offset.getOffset()));
+				LOG.info(String.format("topic[%s] consumer[%s] partition[%s] offset[%s]", offset.getTopic(), conf.getGroupId(), offset.getPartition(), offset.getOffset()));
 				fromOffsets.put(new TopicPartition(offset.getTopic(), offset.getPartition()), offset.getOffset());
 			}
 			stream = KafkaUtils.createDirectStream(jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Assign(fromOffsets.keySet(), kafkaParams, fromOffsets));
@@ -83,7 +85,7 @@ public class Main implements Tool,Serializable {
 		try {
 			jssc.awaitTermination();
 		} catch (InterruptedException e) {
-			log.error("awaitTermination", e);
+			LOG.error("awaitTermination", e);
 		} finally {
 			jssc.stop();
 		}
@@ -110,6 +112,7 @@ public class Main implements Tool,Serializable {
 				while(tuples.hasNext()){
 					//获取kafka(spider_bxin)的数据
 					String message = tuples.next().value();
+
 					JSONObject json = JSONObject.parseObject(message);
 
 					if(!"baiduxin_basicData_basicData".equals(json.getString("xwhat"))){
@@ -127,8 +130,12 @@ public class Main implements Tool,Serializable {
 					String openTime = basicData.getOpenTime();
 					String openTimeSep = "至";
 					if(!StringUtil.judgeEmptyOrNull(openTime)){
-						basicInfo.setOpenStart(openTime.split(openTimeSep)[0]);
-						basicInfo.setOpenEnd(openTime.split(openTimeSep)[1]);
+						String[] timeStarEnd = openTime.split(openTimeSep);
+						basicInfo.setOpenStart(timeStarEnd[0]);
+						if(timeStarEnd.length >=2 ){
+							basicInfo.setOpenEnd(timeStarEnd[1]);
+						}
+
 					}
 
 					basicInfo.setLastUpdateTimestamp(json.getLong("xtime"));
@@ -139,8 +146,8 @@ public class Main implements Tool,Serializable {
 						mysqlService.saveBasicInfo(basicInfo);
 					}
 
-
 				}
+
 				saveKafkaOffset(offset, consumerId);
 			});
 		});
@@ -173,7 +180,13 @@ public class Main implements Tool,Serializable {
 
 
 
-	// 构建kafka参数
+	/**
+	 * 构建kafka参数
+	 * @Author sj
+	 * @Date 2020/7/28 15:26
+	 * @param conf
+	 * @return java.util.Map<java.lang.String,java.lang.Object>
+	 */
 	private Map<String, Object> buildKafkaParameters(Configuration conf) {
 		Map<String, Object> kafkaParams = new HashMap<String, Object>();
 		kafkaParams.put("bootstrap.servers", conf.getBrokers());
