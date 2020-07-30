@@ -10,6 +10,24 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>newland-corpxin-flume-interceptor</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flume</groupId>
+            <artifactId>flume-ng-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.newland</groupId>
+            <artifactId>newland-common</artifactId>
+        </dependency>
+
+
+    </dependencies>
 
 
 </project>

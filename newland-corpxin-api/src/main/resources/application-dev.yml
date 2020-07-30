@@ -33,4 +33,4 @@ mybatis:
   mapper-locations: classpath:mybatis/*Mapper.xml
   type-aliases-package: com.newland.corpxin.model
 
-log-dir: /data3/baidu-company/logs/baidu-company-api/dev/
+log-dir: /data1/work/workspace/logs/newland-corpxin-transporter/api/dev/
