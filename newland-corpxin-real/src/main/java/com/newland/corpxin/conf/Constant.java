@@ -33,4 +33,9 @@ public interface Constant {
 //
 	//空字符串
 	String EMPTY = "";
+
+	/**
+	 * 统一社会信用代码长度：18位
+	 */
+	int CREDITNO_LENGTH = 18;
 }

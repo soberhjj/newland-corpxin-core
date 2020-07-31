@@ -9,10 +9,12 @@ import java.util.*;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.newland.corpxin.conf.Constant;
 import com.newland.corpxin.model.BasicData;
 import com.newland.corpxin.model.BasicInfo;
 import com.newland.corpxin.service.MysqlService;
 import com.newland.corpxin.util.*;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -140,7 +142,7 @@ public class Main implements Tool,Serializable {
 
 					basicInfo.setLastUpdateTimestamp(json.getLong("xtime"));
 
-					if(StringUtil.judgeEmptyOrNull(basicData.getUnifiedCode())){
+					if(StringUtil.judgeEmptyOrNull(basicData.getUnifiedCode()) || basicData.getUnifiedCode().length()!= Constant.CREDITNO_LENGTH){
 						mysqlService.saveBasicInfoError(basicInfo);
 					}else {
 						mysqlService.saveBasicInfo(basicInfo);
