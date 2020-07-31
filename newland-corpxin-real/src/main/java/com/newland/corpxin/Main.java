@@ -141,12 +141,9 @@ public class Main implements Tool,Serializable {
 					}
 
 					basicInfo.setLastUpdateTimestamp(json.getLong("xtime"));
+					basicInfo.setId(DigestUtils.md5Hex(basicInfo.getUnifiedCode()+basicInfo.getLicenseNumber()));
 
-					if(StringUtil.judgeEmptyOrNull(basicData.getUnifiedCode()) || basicData.getUnifiedCode().length()!= Constant.CREDITNO_LENGTH){
-						mysqlService.saveBasicInfoError(basicInfo);
-					}else {
-						mysqlService.saveBasicInfo(basicInfo);
-					}
+					mysqlService.saveBasicInfo(basicInfo);
 
 				}
 
