@@ -12,7 +12,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * 将分类好的数据按日期分区存入Hive表
+ * 将分类好的数据按日期分区写入Hive表,同时将部分字段类型转为Hive表定义好的结构,如map，array
  */
 object DataToHiveHandler {
 

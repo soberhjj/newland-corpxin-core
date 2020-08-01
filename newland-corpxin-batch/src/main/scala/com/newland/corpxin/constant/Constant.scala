@@ -6,13 +6,9 @@ package com.newland.corpxin.constant
  */
 object Constant {
 
-
   // ETL读取路径
   val SPARK_INPUT_PATH = "obs://data-warehouse/ods/baiduxin/origin_events/"
 
   // Hive数据库
   val DB = "ods_baiduxin_db"
-
-  // shell入参日期
-  var INPUT_DATETIME: String=""
 }
