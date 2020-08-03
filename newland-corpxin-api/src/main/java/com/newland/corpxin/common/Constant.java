@@ -20,4 +20,15 @@ public interface Constant {
      * 统一社会信用代码长度：18位
      */
     int CREDITNO_LENGTH = 18;
+
+    /**
+     * 统一社会信用代码标识
+     */
+    String UNIFIEDCODE_TYPE = "unified_code";
+
+    /**
+     * 公司标识
+     */
+    String ENT_NAME = "ent_name";
+
 }

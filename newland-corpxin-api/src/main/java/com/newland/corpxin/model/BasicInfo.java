@@ -1,7 +1,7 @@
 package com.newland.corpxin.model;
 
 public class BasicInfo {
-    private Integer id;
+    private String id;
 
     private String entName;
 
@@ -45,11 +45,11 @@ public class BasicInfo {
 
     private Long lastUpdateTimestamp;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

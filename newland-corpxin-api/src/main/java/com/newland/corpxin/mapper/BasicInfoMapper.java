@@ -1,19 +1,32 @@
 package com.newland.corpxin.mapper;
 
 import com.newland.corpxin.model.BasicInfo;
-import com.newland.corpxin.model.BasicInfoExample;
 import java.util.List;
+
+import com.newland.corpxin.model.BasicInfoRequest;
+import com.newland.corpxin.model.BasicInfoRequest2;
 import org.apache.ibatis.annotations.Param;
 
 public interface BasicInfoMapper {
     /**
-     * 根据统一社会信用代码查询企业基本信息
+     * 根据精确匹配方式返回查询结果
      * @Author Ljh
-     * @Date 2020/7/27 11:10
-     * @param unifiedCode
-     * @return com.newland.corpxin.model.BasicInfo
+     * @Date 2020/8/1 14:44
+     * @param request
+     * @return java.util.List<com.newland.corpxin.model.BasicInfo>
      */
-    BasicInfo selectByUnifiedCode(String unifiedCode);
+    List<BasicInfo> listBasicInfosByExactMatch(@Param("request") BasicInfoRequest request);
+
+    List<BasicInfo> listBasicInfosByFuzzyMatch(@Param("request2") BasicInfoRequest2 request2);
+
+//    /**
+//     * 根据模糊匹配方式返回查询结果
+//     * @Author Ljh
+//     * @Date 2020/8/1 14:44
+//     *
+//     * @return
+//     */
+//    List<BasicInfo> listBasicInfosByFuzzyMatch(BasicInfoRequest request);
 //    int countByExample(BasicInfoExample example);
 //
 //    int deleteByExample(BasicInfoExample example);

@@ -478,10 +478,21 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="selectByUnifiedCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="listBasicInfosByExactMatch" resultMap="BaseResultMap" parameterType="com.newland.corpxin.model.BasicInfoRequest" >
     select
     <include refid="Base_Column_List" />
     from ads_company_basicinfo
-    where unified_code = #{unifiedCode,jdbcType=INTEGER}
+    <where>
+      unified_code in
+      <foreach item="data" collection="request.selectDatas" separator="," open="(" close=")" index="">
+        #{data, jdbcType=VARCHAR}
+      </foreach>
+    </where>
+  </select>
+
+  <select id="listBasicInfosByFuzzyMatch" resultMap="BaseResultMap" parameterType="com.newland.corpxin.model.BasicInfoRequest2" >
+    select
+    <include refid="Base_Column_List" />
+    from ads_company_basicinfo where ent_name like '%${request2.selectData}%' limit 50
   </select>
 </mapper>
