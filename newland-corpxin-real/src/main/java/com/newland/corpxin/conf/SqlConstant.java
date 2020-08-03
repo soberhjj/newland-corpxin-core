@@ -1,5 +1,10 @@
 package com.newland.corpxin.conf;
-
+/**
+ * sql定义
+ *
+ * @author Ljh
+ *
+ */
 public interface SqlConstant {
 	
 	String SQL_QUERY_OFFSET = "select topic,`partition`,offset from kafka_offset where topic = ? and consumer_id = ?";

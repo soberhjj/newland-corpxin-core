@@ -72,7 +72,7 @@ public class Main implements Tool,Serializable {
 			LOG.info(String.format("topic[%s] consumer[%s] not found consumer record", conf.getTopic(), conf.getGroupId()));
 			stream = KafkaUtils.createDirectStream(jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(Arrays.asList(conf.getTopic()), kafkaParams));
 		} else {
-			Map<TopicPartition, Long> fromOffsets = new HashMap<TopicPartition, Long>();
+			Map<TopicPartition, Long> fromOffsets = new HashMap<TopicPartition, Long>(16);
 			for (Offset offset : offsets) {
 				LOG.info(String.format("topic[%s] consumer[%s] partition[%s] offset[%s]", offset.getTopic(), conf.getGroupId(), offset.getPartition(), offset.getOffset()));
 				fromOffsets.put(new TopicPartition(offset.getTopic(), offset.getPartition()), offset.getOffset());
@@ -187,7 +187,7 @@ public class Main implements Tool,Serializable {
 	 * @return java.util.Map<java.lang.String,java.lang.Object>
 	 */
 	private Map<String, Object> buildKafkaParameters(Configuration conf) {
-		Map<String, Object> kafkaParams = new HashMap<String, Object>();
+		Map<String, Object> kafkaParams = new HashMap<String, Object>(16);
 		kafkaParams.put("bootstrap.servers", conf.getBrokers());
 		kafkaParams.put("key.deserializer", StringDeserializer.class);
 		kafkaParams.put("value.deserializer", StringDeserializer.class);
