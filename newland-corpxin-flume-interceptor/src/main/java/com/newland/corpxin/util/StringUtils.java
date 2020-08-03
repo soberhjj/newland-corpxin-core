@@ -1,9 +1,16 @@
-package com.newland.corpxin;
+package com.newland.corpxin.util;
 
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 字符串工具类
+ * @Author Ljh
+ * @Date 2020/8/3 12:32
+ *
+ * @return
+ */
 public class StringUtils {
 
     public static String replace(Object text,String regexStringm,String replacement) {

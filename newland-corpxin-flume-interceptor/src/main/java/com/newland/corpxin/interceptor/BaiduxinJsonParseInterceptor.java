@@ -1,5 +1,6 @@
-package com.newland.corpxin;
+package com.newland.corpxin.interceptor;
 
+import com.newland.corpxin.util.StringUtils;
 import com.newland.framework.common.date.DateUtils;
 import com.newland.framework.common.parser.JSON;
 import org.apache.flume.Context;
