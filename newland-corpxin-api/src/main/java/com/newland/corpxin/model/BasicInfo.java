@@ -1,5 +1,10 @@
 package com.newland.corpxin.model;
 
+/**
+ * @Description: 基本信息实体
+ * @Author: Ljh
+ * @Date 2020/8/3 20:55
+ */
 public class BasicInfo {
     private String id;
 

@@ -88,20 +88,7 @@
     tax_no, license_number, org_no, authority, start_date, ent_type, open_start, open_end,
     district, annual_date, reg_addr, scope, end_date, last_update_timestamp
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.newland.corpxin.model.BasicInfoExample" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from ads_company_basicinfo
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
@@ -112,12 +99,7 @@
     delete from ads_company_basicinfo
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.newland.corpxin.model.BasicInfoExample" >
-    delete from ads_company_basicinfo
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
+
   <insert id="insert" parameterType="com.newland.corpxin.model.BasicInfo" >
     insert into ads_company_basicinfo (id, ent_name, legal_person,
     open_status, reg_capital, real_capital,
@@ -275,12 +257,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.newland.corpxin.model.BasicInfoExample" resultType="java.lang.Integer" >
-    select count(*) from ads_company_basicinfo
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
+
   <update id="updateByExampleSelective" parameterType="map" >
     update ads_company_basicinfo
     <set >
