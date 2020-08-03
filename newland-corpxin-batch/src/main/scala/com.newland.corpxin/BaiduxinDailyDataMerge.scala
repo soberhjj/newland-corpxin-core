@@ -3,6 +3,7 @@ package com.newland.corpxin
 import com.alibaba.fastjson.JSON
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.SparkSession
 
 
 /**
@@ -11,15 +12,19 @@ import org.apache.spark.rdd.RDD
 object BaiduxinDailyDataMerge {
   def main(args: Array[String]): Unit = {
 
-    val sc: SparkContext = new SparkContext(new SparkConf().setAppName("BaiduxinDailyDataMerge").setMaster("local[3]"))
+    val sc: SparkContext = SparkSession.builder().appName("BaiduxinDailyDataMerge").getOrCreate().sparkContext
 
-    //数据输入根路径 -->暂时固定
-    //数据输出根路径 -->暂时固定
+    val incrementDate=args(0)
+    val fullDate=args(1)
+
+    val incrementDataPath="obs://data-warehouse/staging/baiduxin/origin_events/"+incrementDate+"/flume.*"
+    val fullDataPath="obs://data-warehouse/ods/baiduxin/origin_events/"+fullDate+"/part-*"
+    val resultDataPath="obs://data-warehouse/ods/baiduxin/origin_events/"+incrementDate
 
     //以旧的完整版数据创建RDD
-    val rdd1: RDD[String] = sc.textFile("D:\\outputdata.new\\20200724002\\part-00000.txt")
+    val rdd1: RDD[String] = sc.textFile(fullDataPath)
     //以新的数据创建RDD
-    val rdd2: RDD[String] = sc.textFile("D:\\inputdata\\20200728\\flume.1595918926666.txt")
+    val rdd2: RDD[String] = sc.textFile(incrementDataPath)
 
     val rdd3: RDD[String] = rdd1.union(rdd2)
 
@@ -44,7 +49,7 @@ object BaiduxinDailyDataMerge {
       str
     })
 
-    rdd6.repartition(1).saveAsTextFile("D:\\outputdata\\resaa")
+    rdd6.coalesce(1).saveAsTextFile(resultDataPath)
   }
 
 }
