@@ -22,13 +22,7 @@ public interface Constant {
     int CREDITNO_LENGTH = 18;
 
     /**
-     * 统一社会信用代码标识
+     * 请求参数list最大长度
      */
-    String UNIFIEDCODE_TYPE = "unified_code";
-
-    /**
-     * 公司标识
-     */
-    String ENT_NAME = "ent_name";
-
+    int REQUEST_MAX_LENGTH = 50;
 }
