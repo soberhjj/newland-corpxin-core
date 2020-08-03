@@ -1,7 +1,11 @@
 package com.newland.corpxin.model;
 
 import lombok.Data;
-
+/**
+ * @Description:
+ * @Author: Ljh
+ * @Date 2020/7/22 9:54
+ */
 @Data
 public class BasicInfo {
     private String id;
