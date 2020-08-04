@@ -20,4 +20,9 @@ public interface Constant {
      * 统一社会信用代码长度：18位
      */
     int CREDITNO_LENGTH = 18;
+
+    /**
+     * 请求参数list最大长度
+     */
+    int REQUEST_MAX_LENGTH = 50;
 }

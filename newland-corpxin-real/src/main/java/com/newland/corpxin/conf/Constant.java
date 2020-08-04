@@ -7,7 +7,9 @@ package com.newland.corpxin.conf;
  *
  */
 public interface Constant {
-	// 数据库连接配置文件
+	/**
+	 * 数据库连接配置文件
+	 */
 	String DB_CONF_FILE = "dbconf.properties";
 
 //	// 替换成的新字符/
@@ -22,7 +24,9 @@ public interface Constant {
 //	// 数值型的默认值(这个默认值不要随便乱改)
 //	int DEFAULT_NUMBER = 0;
 //
-	// 字符串的默认值
+	/**
+	 * 字符串的默认值
+	 */
 	String DEFAULT_STRING = "null";
 //
 //	// 默认日期
@@ -31,6 +35,8 @@ public interface Constant {
 //	//默认IP
 //	String DEFAULT_IP = "127.0.0.1";
 //
-	//空字符串
+	/**
+	 * 空字符串
+	 */
 	String EMPTY = "";
 }

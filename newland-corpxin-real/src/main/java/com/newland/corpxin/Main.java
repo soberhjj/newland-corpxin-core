@@ -9,10 +9,12 @@ import java.util.*;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.newland.corpxin.conf.Constant;
 import com.newland.corpxin.model.BasicData;
 import com.newland.corpxin.model.BasicInfo;
 import com.newland.corpxin.service.MysqlService;
 import com.newland.corpxin.util.*;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -70,7 +72,7 @@ public class Main implements Tool,Serializable {
 			LOG.info(String.format("topic[%s] consumer[%s] not found consumer record", conf.getTopic(), conf.getGroupId()));
 			stream = KafkaUtils.createDirectStream(jssc, LocationStrategies.PreferConsistent(), ConsumerStrategies.Subscribe(Arrays.asList(conf.getTopic()), kafkaParams));
 		} else {
-			Map<TopicPartition, Long> fromOffsets = new HashMap<TopicPartition, Long>();
+			Map<TopicPartition, Long> fromOffsets = new HashMap<TopicPartition, Long>(16);
 			for (Offset offset : offsets) {
 				LOG.info(String.format("topic[%s] consumer[%s] partition[%s] offset[%s]", offset.getTopic(), conf.getGroupId(), offset.getPartition(), offset.getOffset()));
 				fromOffsets.put(new TopicPartition(offset.getTopic(), offset.getPartition()), offset.getOffset());
@@ -139,12 +141,9 @@ public class Main implements Tool,Serializable {
 					}
 
 					basicInfo.setLastUpdateTimestamp(json.getLong("xtime"));
+					basicInfo.setId(DigestUtils.md5Hex(basicInfo.getUnifiedCode()+basicInfo.getLicenseNumber()));
 
-					if(StringUtil.judgeEmptyOrNull(basicData.getUnifiedCode())){
-						mysqlService.saveBasicInfoError(basicInfo);
-					}else {
-						mysqlService.saveBasicInfo(basicInfo);
-					}
+					mysqlService.saveBasicInfo(basicInfo);
 
 				}
 
@@ -188,7 +187,7 @@ public class Main implements Tool,Serializable {
 	 * @return java.util.Map<java.lang.String,java.lang.Object>
 	 */
 	private Map<String, Object> buildKafkaParameters(Configuration conf) {
-		Map<String, Object> kafkaParams = new HashMap<String, Object>();
+		Map<String, Object> kafkaParams = new HashMap<String, Object>(16);
 		kafkaParams.put("bootstrap.servers", conf.getBrokers());
 		kafkaParams.put("key.deserializer", StringDeserializer.class);
 		kafkaParams.put("value.deserializer", StringDeserializer.class);
