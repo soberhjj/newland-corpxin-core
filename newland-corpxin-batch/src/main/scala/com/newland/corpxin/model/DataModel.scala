@@ -237,19 +237,7 @@ case class Shareholdersdata(
 case class Annualreportdata(
                              var `corpId`: String,
                              `name`: String,
-                             `subRate`: String,
-                             `subMoney`: String,
-                             `paidinMoney`: String,
-                             `compNum`: String,
-                             `compNumLink`: String,
-                             `investmentNum`: String,
                              `link`: String,
-                             `logo`: String,
-                             `logoWord`: String,
-                             `personId`: String,
-                             `personLink`: String,
-                             `pid`: String,
-                             `sortCol`: String,
                              var `ds`: String
                            )
 
