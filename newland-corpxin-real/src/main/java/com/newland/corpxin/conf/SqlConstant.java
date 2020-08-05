@@ -26,4 +26,9 @@ public interface SqlConstant {
 			"ent_type = values(ent_type), open_start = values(open_start), open_end = values(open_end), " +
 			"district = values(district), annual_date = values(annual_date), reg_addr = values(reg_addr), " +
 			"scope = values(scope), end_date = values(end_date), last_update_timestamp = values(last_update_timestamp)";
+
+	String SQL_INSERT_BASICINFO_ERROR = "insert into ads_company_basicinfo_error (ent_name, legal_person, open_status, " +
+			"reg_capital, real_capital, industry, unified_code, tax_no, license_number, org_no, authority, start_date, " +
+			"ent_type, open_start, open_end, district, annual_date, reg_addr, scope, end_date, last_update_timestamp) " +
+			"values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 }

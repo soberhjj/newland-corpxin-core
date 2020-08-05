@@ -140,10 +140,17 @@ public class Main implements Tool,Serializable {
 
 					}
 
+					//xtime通过手工方式拷贝过来
 					basicInfo.setLastUpdateTimestamp(json.getLong("xtime"));
-					basicInfo.setId(DigestUtils.md5Hex(basicInfo.getUnifiedCode()+basicInfo.getLicenseNumber()));
 
-					mysqlService.saveBasicInfo(basicInfo);
+					if(Constant.UNIFIED_CODE_EMPTY.equals(basicInfo.getUnifiedCode()) && StringUtil.judgeEmptyOrNull(basicInfo.getLicenseNumber())){
+						mysqlService.saveBasicInfoError(basicInfo);
+
+					}else {
+						basicInfo.setId(DigestUtils.md5Hex(basicInfo.getUnifiedCode()+basicInfo.getLicenseNumber()));
+						mysqlService.saveBasicInfo(basicInfo);
+					}
+
 
 				}
 
