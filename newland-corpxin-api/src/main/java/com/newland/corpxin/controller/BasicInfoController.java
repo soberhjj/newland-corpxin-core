@@ -30,6 +30,7 @@ public class BasicInfoController {
 
         // 限制请求数组的长度
         if(unifiedCodeList.size() > Constant.REQUEST_MAX_LENGTH){
+            log.info("the length of unified_code List is {}, greater than %s",unifiedCodeList.size(),Constant.REQUEST_MAX_LENGTH);
             response.setCode("List is too long");
             response.setData(new ArrayList<>());
             response.setDescribe(String.format("the length of unified_code List is %s, greater than %s",unifiedCodeList.size(),Constant.REQUEST_MAX_LENGTH));
