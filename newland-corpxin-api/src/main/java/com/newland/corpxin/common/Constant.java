@@ -24,5 +24,5 @@ public interface Constant {
     /**
      * 请求参数list最大长度
      */
-    int REQUEST_MAX_LENGTH = 50;
+    int REQUEST_MAX_LENGTH = 500;
 }

@@ -3,6 +3,7 @@ package com.newland.corpxin.interceptor;
 import com.alibaba.fastjson.JSON;
 import com.newland.corpxin.common.Constant;
 import com.newland.corpxin.entity.Trade;
+import com.newland.corpxin.util.StringUtils;
 import com.newland.framework.common.date.DateUtils;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Description: 公共资源交易平台时间拦截器(根据抓取时间分区)
+ * @Description: 公共资源交易平台拦截器(根据抓取时间分区,解析json数据)
  * @Author: Ljh
  * @Date 2020/8/3 10:22
  */
@@ -49,14 +50,21 @@ public class TradeTimeParseInterceptor implements Interceptor {
         }
         // 修改headers信息,可以在sink的时候,写入到特定目录
         Map<String, String> headers = event.getHeaders();
-        String hdfsPath = "";
 
+        String hdfsPath = null;
+        String[] dataArr = null;
         try {
-            hdfsPath = parse(eventData);
+            dataArr = parse(eventData);
+            if(StringUtils.isEmpty(dataArr[0]) || StringUtils.isEmpty(dataArr[1])) {
+                throw new Exception("解析失败，解析结果为空");
+            }
+            hdfsPath = "/" + dataArr[0];
+            event.setBody(dataArr[1].getBytes());
+
         } catch (Exception e) {
             logger.error(String.format("parse data:%s fail,reason: %s", eventData, e.getMessage()));
-            e.printStackTrace();
-            hdfsPath = "error";
+            hdfsPath = "/error";
+            event.setBody(eventData.getBytes());
         }
 
         headers.put("hdfspath", hdfsPath);
@@ -106,20 +114,39 @@ public class TradeTimeParseInterceptor implements Interceptor {
     }
 
     /**
-     * 根据时间分区，原样数据不做变动
+     * 根据时间分区，解析json数据
      * @Author Ljh
      * @Date 2020/8/3 10:55
      * @param message
      * @return java.lang.String
      */
-    private String parse(String message){
+    private String[] parse(String message){
 
-        Trade trade = JSON.parseObject(message,Trade.class);
+        String[] resultArr = new String[2];
+        Trade trade = JSON.parseObject(StringUtils.replace(message, Constant.REGEX_SPECIAL_CHAR, Constant.HTML_BR),Trade.class);
 
-        int crawlTime = trade.getCrawlTime();
+        StringBuilder sb = new StringBuilder();
+        sb.append(trade.getId()).append(Constant.SEP_ONE)
+                .append(trade.getCrawlTime()).append(Constant.SEP_ONE)
+                .append(trade.getUrl()).append(Constant.SEP_ONE)
+                .append(trade.getProjectName()).append(Constant.SEP_ONE)
+                .append(trade.getProjectNum()).append(Constant.SEP_ONE)
+                .append(trade.getInformationType()).append(Constant.SEP_ONE)
+                .append(trade.getBusinessType()).append(Constant.SEP_ONE)
+                .append(trade.getProvince()).append(Constant.SEP_ONE)
+                .append(trade.getFromUrl()).append(Constant.SEP_ONE)
+                .append(trade.getIndustry()).append(Constant.SEP_ONE)
+                .append(trade.getOrigin()).append(Constant.SEP_ONE)
+                .append(trade.getTitle()).append(Constant.SEP_ONE)
+                .append(trade.getCreatedAt()).append(Constant.SEP_ONE)
+                .append(trade.getContent()).append(Constant.SEP_ONE)
+                .append(trade.getOrginalUrl()).append(Constant.SEP_ONE)
+                .append(trade.getDataSource());
 
-        return DateUtils.dateToString(DateUtils.getDate(crawlTime),Constant.DATE_FORMATE);
+        resultArr[0] = DateUtils.dateToString(DateUtils.getDate(trade.getCrawlTime()),"yyyyMMdd");
+        resultArr[1] = sb.toString();
 
+        return resultArr;
 
     }
 }
