@@ -22,7 +22,7 @@ object BaiduxinETLApp {
     val sc: SparkContext = spark.sparkContext
     sc.setLogLevel("ERROR")
 
-    // TODO shell脚本入参日期，如20200731
+    // TODO shell脚本入参日期，如20200730
     val dateTime: String = args(0)
 
     // TODO 读取obs上的对应日期的文件，并做缓存，为之后复用此rdd做优化
