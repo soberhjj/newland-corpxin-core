@@ -64,7 +64,7 @@ object BaiduxinDailyDataMerge {
       str
     })
 
-    rdd6.coalesce(1).saveAsTextFile(resultDataPath)
+    rdd6.coalesce(10).saveAsTextFile(resultDataPath)
     errorXcontent.coalesce(1).saveAsTextFile(errorXcontentDataPath)
   }
 }
