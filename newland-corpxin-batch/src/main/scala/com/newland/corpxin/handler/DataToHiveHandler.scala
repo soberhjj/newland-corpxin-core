@@ -30,29 +30,31 @@ object DataToHiveHandler {
       val tableName: String = Constant.DB + ".ods_" + list.head._1
       val data: RDD[Filinginfo] = spark.sparkContext.parallelize(list).map(_._2)
       val df = data.map { bean =>
-        arrMapPlaintiff.clear()
-        arrMapDefendant.clear()
-        val array1: JSONArray = JSON.parseArray(bean.`plaintiff`)
-        val array2: JSONArray = JSON.parseArray(bean.`defendant`)
-        for (i <- 0 until array1.size()) {
-          map1.clear()
-          val obj: JSONObject = array1.getJSONObject(i)
-          val keys: util.Iterator[String] = obj.keySet().iterator()
-          while (keys.hasNext) {
-            val key: String = keys.next()
-            map1.put(key, obj.getString(key))
+        if ((bean.`plaintiff` != null && bean.`plaintiff`.length() != 0) && (bean.`defendant` != null && bean.`defendant`.length() != 0)) {
+          arrMapPlaintiff.clear()
+          arrMapDefendant.clear()
+          val array1: JSONArray = JSON.parseArray(bean.`plaintiff`)
+          val array2: JSONArray = JSON.parseArray(bean.`defendant`)
+          for (i <- 0 until array1.size()) {
+            map1.clear()
+            val obj: JSONObject = array1.getJSONObject(i)
+            val keys: util.Iterator[String] = obj.keySet().iterator()
+            while (keys.hasNext) {
+              val key: String = keys.next()
+              map1.put(key, obj.getString(key))
+            }
+            arrMapPlaintiff.append(map1)
           }
-          arrMapPlaintiff.append(map1)
-        }
-        for (i <- 0 until array2.size()) {
-          map2.clear()
-          val obj: JSONObject = array2.getJSONObject(i)
-          val keys: util.Iterator[String] = obj.keySet().iterator()
-          while (keys.hasNext) {
-            val key: String = keys.next()
-            map2.put(key, obj.getString(key))
+          for (i <- 0 until array2.size()) {
+            map2.clear()
+            val obj: JSONObject = array2.getJSONObject(i)
+            val keys: util.Iterator[String] = obj.keySet().iterator()
+            while (keys.hasNext) {
+              val key: String = keys.next()
+              map2.put(key, obj.getString(key))
+            }
+            arrMapDefendant.append(map2)
           }
-          arrMapDefendant.append(map2)
         }
         Filinginfo2(bean.`corpId`, bean.`date`, bean.`caseNumber`, bean.`court`, arrMapPlaintiff.toArray, arrMapDefendant.toArray, bean.`filingInfoId`, bean.`detailUrl`, bean.`ds`)
       }.toDF()
@@ -71,12 +73,14 @@ object DataToHiveHandler {
       val tableName: String = Constant.DB + ".ods_" + list.head._1
       val data: RDD[Basicdata] = spark.sparkContext.parallelize(list).map(_._2)
       val df = data.map { bean =>
-        val obj: JSONObject = JSON.parseObject(bean.`labels`)
-        labelsMap.clear()
-        val keys: util.Iterator[String] = obj.keySet().iterator()
-        while (keys.hasNext) {
-          val key: String = keys.next()
-          labelsMap.put(key, obj.getString(key))
+        if (bean.`labels` != null && bean.`labels`.length() != 0) {
+          val obj: JSONObject = JSON.parseObject(bean.`labels`)
+          labelsMap.clear()
+          val keys: util.Iterator[String] = obj.keySet().iterator()
+          while (keys.hasNext) {
+            val key: String = keys.next()
+            labelsMap.put(key, obj.getString(key))
+          }
         }
         Basicdata2(bean.`corpId`, bean.`prevEntName`, bean.`startDate`, bean.`authority`, bean.`legalPerson`, bean.`licenseNumber`, bean.`district`, bean.`scope`, bean.`openStatus`, bean.`taxNo`, bean.`entType`, bean.`annualDate`, bean.`realCapital`, bean.`industry`, bean.`unifiedCode`, bean.`openTime`, bean.`regAddr`, bean.`regCapital`, bean.`orgNo`, bean.`addr`, bean.`aifanfanJumpUrl`, bean.`benchMark`, bean.`claimUrl`, bean.`compNum`, bean.`compNumLink`, bean.`describe`, bean.`districtCode`, bean.`email`, bean.`entLogo`, bean.`entLogoWord`, bean.`entName`, bean.`isClaim`, bean.`isCollected`, labelsMap, bean.`noRzvip`, bean.`oldEntName`, bean.`orgType`, bean.`paidinCapital`, bean.`personId`, bean.`personLink`, bean.`personLogo`, bean.`personLogoWord`, bean.`prinType`, bean.`scale`, bean.`shareLogo`, bean.`telephone`, bean.`regNo`, bean.`website`, bean.`analyse_website`, bean.`ds`)
       }.toDF()
@@ -202,12 +206,14 @@ object DataToHiveHandler {
       val tableName: String = Constant.DB + ".ods_" + list.head._1
       val data: RDD[Foodquality] = spark.sparkContext.parallelize(list).map(_._2)
       val df = data.map { bean =>
-        val obj: JSONObject = JSON.parseObject(bean.`detail`)
-        detailMap.clear()
-        val keys: util.Iterator[String] = obj.keySet().iterator()
-        while (keys.hasNext) {
-          val key: String = keys.next()
-          detailMap.put(key, obj.getString(key))
+        if (bean.`detail` != null && bean.`detail`.length() != 0) {
+          val obj: JSONObject = JSON.parseObject(bean.`detail`)
+          detailMap.clear()
+          val keys: util.Iterator[String] = obj.keySet().iterator()
+          while (keys.hasNext) {
+            val key: String = keys.next()
+            detailMap.put(key, obj.getString(key))
+          }
         }
         Foodquality2(bean.`corpId`, bean.`detailUrl`, bean.`insId`, bean.`notificationDate`, bean.`notificationNum`, bean.`productName`,
           bean.`qualityId`, bean.`result`, bean.`type`, detailMap, bean.`ds`)
@@ -238,12 +244,14 @@ object DataToHiveHandler {
       val tableName: String = Constant.DB + ".ods_" + list.head._1
       val data: RDD[Quality] = spark.sparkContext.parallelize(list).map(_._2)
       val df = data.map { bean =>
-        val obj: JSONObject = JSON.parseObject(bean.`detail`)
-        detailMap.clear()
-        val keys: util.Iterator[String] = obj.keySet().iterator()
-        while (keys.hasNext) {
-          val key: String = keys.next()
-          detailMap.put(key, obj.getString(key))
+        if (bean.`detail` != null && bean.`detail`.length() != 0) {
+          val obj: JSONObject = JSON.parseObject(bean.`detail`)
+          detailMap.clear()
+          val keys: util.Iterator[String] = obj.keySet().iterator()
+          while (keys.hasNext) {
+            val key: String = keys.next()
+            detailMap.put(key, obj.getString(key))
+          }
         }
         Quality2(bean.`corpId`, bean.`samlingYears`, bean.`samlingBatch`, bean.`productName`, bean.`samplingResult`, bean.`detailUrl`, bean.`insId`, bean.`qualityId`, bean.`type`, detailMap, bean.`ds`)
       }.toDF()
@@ -273,12 +281,14 @@ object DataToHiveHandler {
       val tableName: String = Constant.DB + ".ods_" + list.head._1
       val data: RDD[Copyright] = spark.sparkContext.parallelize(list).map(_._2)
       val df = data.map { bean =>
-        val obj: JSONObject = JSON.parseObject(bean.`detail`)
-        detailMap.clear()
-        val keys: util.Iterator[String] = obj.keySet().iterator()
-        while (keys.hasNext) {
-          val key: String = keys.next()
-          detailMap.put(key, obj.getString(key))
+        if (bean.`detail` != null && bean.`detail`.length() != 0) {
+          val obj: JSONObject = JSON.parseObject(bean.`detail`)
+          detailMap.clear()
+          val keys: util.Iterator[String] = obj.keySet().iterator()
+          while (keys.hasNext) {
+            val key: String = keys.next()
+            detailMap.put(key, obj.getString(key))
+          }
         }
         Copyright2(bean.`corpId`, bean.`softwareName`, bean.`shortName`, bean.`batchNum`, bean.`softwareType`, bean.`typeCode`, bean.`regDate`, bean.`softId`, bean.`detailUrl`, detailMap, bean.`ds`)
       }.toDF()
@@ -297,15 +307,17 @@ object DataToHiveHandler {
       val tableName: String = Constant.DB + ".ods_" + list.head._1
       val data: RDD[Icpinfo] = spark.sparkContext.parallelize(list).map(_._2)
       val df = data.map { bean =>
-        arrHomesite.clear()
-        arrdomain.clear()
-        val array1: util.List[String] = JSON.parseArray(bean.`homeSite`, classOf[String])
-        val array2: util.List[String] = JSON.parseArray(bean.`domain`, classOf[String])
-        for (i <- 0 until array1.size()) {
-          arrHomesite.append(array1.get(i))
-        }
-        for (i <- 0 until array2.size()) {
-          arrdomain.append(array2.get(i))
+        if ((bean.`homeSite` != null && bean.`homeSite`.length() != 0) && (bean.`domain` != null && bean.`domain`.length() != 0)) {
+          arrHomesite.clear()
+          arrdomain.clear()
+          val array1: util.List[String] = JSON.parseArray(bean.`homeSite`, classOf[String])
+          val array2: util.List[String] = JSON.parseArray(bean.`domain`, classOf[String])
+          for (i <- 0 until array1.size()) {
+            arrHomesite.append(array1.get(i))
+          }
+          for (i <- 0 until array2.size()) {
+            arrdomain.append(array2.get(i))
+          }
         }
         Icpinfo2(bean.`corpId`, bean.`siteName`, arrHomesite.toArray, arrdomain.toArray, bean.`icpNo`, bean.`ds`)
       }.toDF()
@@ -432,17 +444,19 @@ object DataToHiveHandler {
       val tableName: String = Constant.DB + ".ods_" + list.head._1
       val data: RDD[Getcourtnoticedata] = spark.sparkContext.parallelize(list).map(_._2)
       val df = data.map { bean =>
-        arrMapPeople.clear()
-        val array1: JSONArray = JSON.parseArray(bean.`people`)
-        for (i <- 0 until array1.size()) {
-          map1.clear()
-          val obj: JSONObject = array1.getJSONObject(i)
-          val keys: util.Iterator[String] = obj.keySet().iterator()
-          while (keys.hasNext) {
-            val key: String = keys.next()
-            map1.put(key, obj.getString(key))
+        if (bean.`people` != null && bean.`people`.length() != 0) {
+          arrMapPeople.clear()
+          val array1: JSONArray = JSON.parseArray(bean.`people`)
+          for (i <- 0 until array1.size()) {
+            map1.clear()
+            val obj: JSONObject = array1.getJSONObject(i)
+            val keys: util.Iterator[String] = obj.keySet().iterator()
+            while (keys.hasNext) {
+              val key: String = keys.next()
+              map1.put(key, obj.getString(key))
+            }
+            arrMapPeople.append(map1)
           }
-          arrMapPeople.append(map1)
         }
         Getcourtnoticedata2(bean.`corpId`, bean.date, bean.`type`, bean.`cause`, bean.`courtnoticeId`, bean.`court`, arrMapPeople.toArray, bean.`detailUrl`, bean.`ds`)
       }.toDF()
@@ -497,15 +511,17 @@ object DataToHiveHandler {
       val tableName: String = Constant.DB + ".ods_" + list.head._1
       val data: RDD[Opennotice] = spark.sparkContext.parallelize(list).map(_._2)
       val df = data.map { bean =>
-        arrPlaintiff.clear()
-        arrDefendant.clear()
-        val array1: util.List[String] = JSON.parseArray(bean.`plaintifflist`, classOf[String])
-        val array2: util.List[String] = JSON.parseArray(bean.`defendantlist`, classOf[String])
-        for (i <- 0 until array1.size()) {
-          arrPlaintiff.append(array1.get(i))
-        }
-        for (i <- 0 until array2.size()) {
-          arrDefendant.append(array2.get(i))
+        if ((bean.`plaintifflist` != null && bean.`plaintifflist`.length() != 0) && (bean.`defendantlist` != null && bean.`defendantlist`.length() != 0)) {
+          arrPlaintiff.clear()
+          arrDefendant.clear()
+          val array1: util.List[String] = JSON.parseArray(bean.`plaintifflist`, classOf[String])
+          val array2: util.List[String] = JSON.parseArray(bean.`defendantlist`, classOf[String])
+          for (i <- 0 until array1.size()) {
+            arrPlaintiff.append(array1.get(i))
+          }
+          for (i <- 0 until array2.size()) {
+            arrDefendant.append(array2.get(i))
+          }
         }
         Opennotice2(bean.`corpId`, bean.`hearingDate`, bean.`caseNo`, bean.`caseReason`, bean.`judge`, bean.`court`, bean.`tribunal`, arrPlaintiff.toArray, arrDefendant.toArray, bean.`ename`, bean.`pureRole`, bean.`dataId`, bean.`content`, bean.`region`, bean.`department`, bean.`author`, bean.`judgeType`, bean.`detailUrl`, bean.`ds`)
       }.toDF()
@@ -550,29 +566,31 @@ object DataToHiveHandler {
       val tableName: String = Constant.DB + ".ods_" + list.head._1
       val data: RDD[Simplecancellation] = spark.sparkContext.parallelize(list).map(_._2)
       val df = data.map { bean =>
-        arrMapObjections.clear()
-        arrMapResult.clear()
-        val array1: JSONArray = JSON.parseArray(bean.`gsScaObjections`)
-        val array2: JSONArray = JSON.parseArray(bean.`gsScaResult`)
-        for (i <- 0 until array1.size()) {
-          map1.clear()
-          val obj: JSONObject = array1.getJSONObject(i)
-          val keys: util.Iterator[String] = obj.keySet().iterator()
-          while (keys.hasNext) {
-            val key: String = keys.next()
-            map1.put(key, obj.getString(key))
+        if ((bean.`gsScaObjections` != null && bean.`gsScaObjections`.length() != 0) && (bean.`gsScaResult` != null && bean.`gsScaResult`.length() != 0)) {
+          arrMapObjections.clear()
+          arrMapResult.clear()
+          val array1: JSONArray = JSON.parseArray(bean.`gsScaObjections`)
+          val array2: JSONArray = JSON.parseArray(bean.`gsScaResult`)
+          for (i <- 0 until array1.size()) {
+            map1.clear()
+            val obj: JSONObject = array1.getJSONObject(i)
+            val keys: util.Iterator[String] = obj.keySet().iterator()
+            while (keys.hasNext) {
+              val key: String = keys.next()
+              map1.put(key, obj.getString(key))
+            }
+            arrMapObjections.append(map1)
           }
-          arrMapObjections.append(map1)
-        }
-        for (i <- 0 until array2.size()) {
-          map2.clear()
-          val obj: JSONObject = array2.getJSONObject(i)
-          val keys: util.Iterator[String] = obj.keySet().iterator()
-          while (keys.hasNext) {
-            val key: String = keys.next()
-            map2.put(key, obj.getString(key))
+          for (i <- 0 until array2.size()) {
+            map2.clear()
+            val obj: JSONObject = array2.getJSONObject(i)
+            val keys: util.Iterator[String] = obj.keySet().iterator()
+            while (keys.hasNext) {
+              val key: String = keys.next()
+              map2.put(key, obj.getString(key))
+            }
+            arrMapResult.append(map2)
           }
-          arrMapResult.append(map2)
         }
         Simplecancellation2(bean.`corpId`, bean.`entName`, bean.`creditNo`, bean.`noticePeriodDate`, bean.`departMent`, arrMapObjections.toArray, bean.`cancelId`, bean.`cancelImageUrl`, bean.`detailUrl`, arrMapResult.toArray, bean.`ds`)
       }.toDF()

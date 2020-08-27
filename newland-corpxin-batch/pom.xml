@@ -43,6 +43,7 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
         </dependency>
+
         <dependency>
             <groupId>fastutil</groupId>
             <artifactId>fastutil</artifactId>

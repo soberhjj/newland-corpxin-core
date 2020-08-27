@@ -1,7 +1,7 @@
 package com.newland.corpxin.app
 
 import com.newland.corpxin.constant.Constant
-import com.newland.corpxin.handler.{DataAssortHandler, DataAssortHandler, DataToHiveHandler, DataToHiveHandler}
+import com.newland.corpxin.handler.{DataAssortHandler}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.storage.StorageLevel
@@ -15,8 +15,7 @@ object BaiduxinETLApp {
       .setAppName("BaiduxinETLToHive")
       .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .set("spark.kryo.registrator", "com.newland.corpxin.model.MyRegistrator")
-//      .set("spark.kryoserializer.buffer.max", "128m")
-//      .set("spark.kryoserializer.buffer.mb","10")
+      .set("spark.kryoserializer.buffer.max", "1024m")
       .set("spark.kryo.registrationRequired","false")
     val spark: SparkSession = SparkSession.builder().config(sparkConf).enableHiveSupport().getOrCreate()
     val sc: SparkContext = spark.sparkContext
@@ -26,7 +25,7 @@ object BaiduxinETLApp {
     val dateTime: String = args(0)
 
     // TODO 读取obs上的对应日期的文件，并做缓存，为之后复用此rdd做优化
-    val originRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime+ "/part-*").persist(StorageLevel.MEMORY_ONLY_SER)
+    val originRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime+ "/part-*").persist(StorageLevel.MEMORY_AND_DISK_SER)
 
     // TODO 对数据进行分表并入库
     DataAssortHandler.DataAssort(originRDD,dateTime,spark)

@@ -20,7 +20,7 @@
         <mybatis.springboot.version>2.1.0</mybatis.springboot.version>
         <lombok.version>1.18.10</lombok.version>
         <spark.version>2.2.0</spark.version>
-        <fastjson.version>1.2.59</fastjson.version>
+        <fastjson.version>1.2.68</fastjson.version>
         <slf4j.api.version>1.7.7</slf4j.api.version>
         <hutool.version>4.6.3</hutool.version>
         <flume.version>1.8.0</flume.version>

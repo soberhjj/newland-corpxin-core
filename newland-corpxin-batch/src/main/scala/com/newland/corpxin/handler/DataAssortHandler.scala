@@ -1,8 +1,10 @@
 package com.newland.corpxin.handler
 import com.alibaba.fastjson.{JSON, JSONArray, JSONObject}
+import com.google.gson.Gson
 import com.newland.corpxin.model._
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
+
 import collection.JavaConversions._
 
 
@@ -60,6 +62,7 @@ object DataAssortHandler {
         val xwho: String = jsonStr.getString("xwho")
         val xwhat: String = jsonStr.getString("xwhat")
         val arr: JSONArray = jsonStr.getJSONArray("xcontent")
+
         if("baiduxin_focalPoint_opennotice"==xwhat) {
           for (i <- 0 until arr.size()) {
             val data = JSON.parseObject(arr.getString(i), classOf[Opennotice])
