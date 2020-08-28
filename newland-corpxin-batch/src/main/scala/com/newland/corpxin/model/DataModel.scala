@@ -1,6 +1,9 @@
 
 package com.newland.corpxin.model
 
+import com.esotericsoftware.kryo.Kryo
+import org.apache.spark.serializer.KryoRegistrator
+
 import scala.collection.mutable
 
 /*
@@ -237,19 +240,7 @@ case class Shareholdersdata(
 case class Annualreportdata(
                              var `corpId`: String,
                              `name`: String,
-                             `subRate`: String,
-                             `subMoney`: String,
-                             `paidinMoney`: String,
-                             `compNum`: String,
-                             `compNumLink`: String,
-                             `investmentNum`: String,
                              `link`: String,
-                             `logo`: String,
-                             `logoWord`: String,
-                             `personId`: String,
-                             `personLink`: String,
-                             `pid`: String,
-                             `sortCol`: String,
                              var `ds`: String
                            )
 
@@ -743,3 +734,55 @@ case class Workright(
                       `registrationDate`: String,
                       var `ds`: String
                     )
+
+class MyRegistrator extends KryoRegistrator {
+  override def registerClasses(kryo: Kryo): Unit = {
+    kryo.register(classOf[Basicdata])
+    kryo.register(classOf[Basicdata2])
+    kryo.register(classOf[Branchsdata])
+    kryo.register(classOf[Changerecorddata])
+    kryo.register(classOf[Directorsdata])
+    kryo.register(classOf[Headcompany])
+    kryo.register(classOf[Holdsdata])
+    kryo.register(classOf[Investrecorddata])
+    kryo.register(classOf[Shareholdersdata])
+    kryo.register(classOf[Annualreportdata])
+    kryo.register(classOf[Abnormal])
+    kryo.register(classOf[Chattelmortgage])
+    kryo.register(classOf[Clearaccount])
+    kryo.register(classOf[Discredit])
+    kryo.register(classOf[Equitypledge])
+    kryo.register(classOf[Executedperson])
+    kryo.register(classOf[Filinginfo])
+    kryo.register(classOf[Filinginfo2])
+    kryo.register(classOf[Person])
+    kryo.register(classOf[Getcourtnoticedata])
+    kryo.register(classOf[Getcourtnoticedata2])
+    kryo.register(classOf[Illegal])
+    kryo.register(classOf[Judicialauction])
+    kryo.register(classOf[Lawwenshu])
+    kryo.register(classOf[Opennotice])
+    kryo.register(classOf[Opennotice2])
+    kryo.register(classOf[Penalties])
+    kryo.register(classOf[Restrictedconsumer])
+    kryo.register(classOf[Simplecancellation])
+    kryo.register(classOf[Simplecancellation2])
+    kryo.register(classOf[Stockfreeze])
+    kryo.register(classOf[Taxviolation])
+    kryo.register(classOf[Terminationcase])
+    kryo.register(classOf[Doublecheckup])
+    kryo.register(classOf[Foodquality])
+    kryo.register(classOf[Foodquality2])
+    kryo.register(classOf[License])
+    kryo.register(classOf[Quality])
+    kryo.register(classOf[Quality2])
+    kryo.register(classOf[Randominspection])
+    kryo.register(classOf[Copyright])
+    kryo.register(classOf[Copyright2])
+    kryo.register(classOf[Icpinfo])
+    kryo.register(classOf[Icpinfo2])
+    kryo.register(classOf[Mark])
+    kryo.register(classOf[Patent])
+    kryo.register(classOf[Workright])
+  }
+}

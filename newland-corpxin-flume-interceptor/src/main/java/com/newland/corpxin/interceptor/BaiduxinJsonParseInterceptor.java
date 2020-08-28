@@ -55,7 +55,6 @@ public class BaiduxinJsonParseInterceptor implements Interceptor {
         //将时间戳装换为表示日期的字符串，格式为yyyyMMdd
         String when = DateUtils.dateToString(DateUtils.getDate(ts), "yyyyMMdd");
 
-
         // 修改headers信息,可以在sink的时候,写入到特定目录
         Map<String, String> headers = event.getHeaders();
         String hdfsPath="/"+ when;
