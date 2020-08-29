@@ -22,13 +22,21 @@ object DataToHiveHandler {
   def filing(list: List[(String, Filinginfo)], spark: SparkSession) = {
     if (list.size > 0) {
       import spark.implicits._
+      /*
+      定义集合的目的是为了和hive表中的复杂类型字段相互匹配，例如此时该表的某些字段在hive是array[map[string,string]],那这边的集合就定义为相应的集合类型
+       */
       val arrMapPlaintiff: ArrayBuffer[mutable.Map[String, String]] = new ArrayBuffer[mutable.Map[String, String]]()
       val arrMapDefendant: ArrayBuffer[mutable.Map[String, String]] = new ArrayBuffer[mutable.Map[String, String]]()
       val map1: mutable.Map[String, String] = mutable.Map[String, String]()
       val map2: mutable.Map[String, String] = mutable.Map[String, String]()
 
+      // 取出表名
       val tableName: String = Constant.DB + ".ods_" + list.head._1
+
+      // 取出list._2的数据，并转为rdd，目的是之后转为dataframe，方便插入hive表
       val data: RDD[Filinginfo] = spark.sparkContext.parallelize(list).map(_._2)
+
+      // 将plaintiff和defendant字段由 string -> array[map[string,string]]
       val df = data.map { bean =>
         if ((bean.`plaintiff` != null && bean.`plaintiff`.length() != 0) && (bean.`defendant` != null && bean.`defendant`.length() != 0)) {
           arrMapPlaintiff.clear()
@@ -56,9 +64,11 @@ object DataToHiveHandler {
             arrMapDefendant.append(map2)
           }
         }
+        // Filinginfo2和Filinginfo区别在于其中的字段由string->Array[mutable.Map[String, String]] 目的也是和hive表中定义的字段类型匹配
         Filinginfo2(bean.`corpId`, bean.`date`, bean.`caseNumber`, bean.`court`, arrMapPlaintiff.toArray, arrMapDefendant.toArray, bean.`filingInfoId`, bean.`detailUrl`, bean.`ds`)
       }.toDF()
 
+      // 将rdd转化后的df以覆盖的方式写入对应的hive表中
       df.write.mode("overwrite").insertInto(tableName)
     }
   }

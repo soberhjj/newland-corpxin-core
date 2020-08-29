@@ -18,6 +18,13 @@ object DataAssortHandler {
 
   def DataAssort(oriRDD: RDD[String], dt: String, spark: SparkSession) = {
 
+    /*
+    这边定义了37个累加器，目的是读取obs文件后判断每一行的数据类型然后放入各自类型的累加器中。
+    为什么不用普通集合而要用累加器？ 因为假如你在Driver端定义了普通集合，Executor端往普通集合里添加数据时，
+                              Driver端实际上是取不到数据的，这是因为他们之间的序列化问题导致的。
+    所以这里的累加器的作用其实和普通集合类似，都是用来存储分类后的数据，唯一的区别就在于Driver最终能获取到累加器的内容，而普通集合不行。
+                              除非把普通集合定义在Executor中，就能避免Driver和Executor之间的序列化问题。
+     */
     val workrightAcc = spark.sparkContext.collectionAccumulator[(String, Workright)]
     val executedpersonAcc = spark.sparkContext.collectionAccumulator[(String, Executedperson)]
     val abnormalAcc = spark.sparkContext.collectionAccumulator[(String, Abnormal)]
@@ -56,6 +63,12 @@ object DataAssortHandler {
     val filinginfoAcc = spark.sparkContext.collectionAccumulator[(String, Filinginfo)]
     val opennoticeAcc = spark.sparkContext.collectionAccumulator[(String, Opennotice)]
 
+    /*
+    遍历obs数据的每一行，将每一行都转为json对象，目的是获取每行数据xwho,xwhat,xcontent的值。
+     xwho为企业的id，xwhat为表的类型，xcontent是个json数组，所以要遍历一下它，然后将xcontent中的内容转为对应的case class(理解为javabean)
+     最后遍历完所有数据后，同时也把也把每行的数据分类好放进各自的累加器中，等待插入hive表
+     建议这边可以照着原始数据看，对照下能看的更明白
+     */
     oriRDD.foreachPartition { partitionIter =>
       partitionIter.foreach { json =>
         val jsonStr: JSONObject = JSON.parseObject(json)
@@ -68,6 +81,7 @@ object DataAssortHandler {
             val data = JSON.parseObject(arr.getString(i), classOf[Opennotice])
             data.`corpId` = xwho
             data.`ds` = dt
+            // 存入累加器中的同时，把xwhat表名也放进去，方便之后入库提取出表名。
             opennoticeAcc.add((xwhat, data))
           }
         }
@@ -362,6 +376,15 @@ object DataAssortHandler {
       }
     }
 
+    /*
+    入库的逻辑主要是把累加器中的值批量插入hive中对应的表结构，但是由于hive表中目前有4中表类型，
+    一种是表字段都是string，
+    一种是表字段包括map[string,string]
+    一种是表字段包括array[string]
+    一种是表字段包括array[map[string,string]]
+    由于上一步数据分类时转为的所有表的case class里的字段都是string类型，不满足hive中某些表字段里的复杂类型，所以在数据入hive表之前，
+    假如hive表中字段是复杂结构，则需要将相应的string转为复杂结构，如string->map[string,string]
+     */
     // TODO 数据入库
     DataToHiveHandler.filing(filinginfoAcc.value.toList, spark)
     DataToHiveHandler.hold(holdsdataAcc.value.toList, spark)
