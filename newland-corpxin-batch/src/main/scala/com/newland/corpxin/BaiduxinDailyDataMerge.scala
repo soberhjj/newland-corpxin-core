@@ -1,13 +1,12 @@
 package com.newland.corpxin
 
-import com.alibaba.fastjson.{JSON, JSONArray}
-import org.apache.spark.{SparkConf, SparkContext}
+import com.alibaba.fastjson.JSON
+import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
-
 /**
- * @Author: sober  2020-07-28 16:39        
+ * @Author: sober  2020-07-28 16:39
  */
 object BaiduxinDailyDataMerge {
   def main(args: Array[String]): Unit = {
@@ -20,28 +19,14 @@ object BaiduxinDailyDataMerge {
     val incrementDataPath="obs://data-warehouse/staging/baiduxin/origin_events/"+incrementDate+"/flume.*"
     val fullDataPath="obs://data-warehouse/ods/baiduxin/origin_events/"+fullDate+"/part-*"
     val resultDataPath="obs://data-warehouse/ods/baiduxin/origin_events/"+incrementDate
-    val errorXcontentDataPath="obs://data-warehouse/ods/baiduxin/error_format/"+incrementDate
 
     //以旧的完整版数据创建RDD
     val rdd1: RDD[String] = sc.textFile(fullDataPath)
 
     //以新的数据创建RDD
     val rdd2: RDD[String] = sc.textFile(incrementDataPath)
-    //处理"xcontent"字段值可能出现格式错误的问题
-    val dealXcontent: RDD[String] = rdd2.map(line => {
-      try {
-        val jsonObj = JSON.parseObject(line)
-        val arr: JSONArray = jsonObj.getJSONArray("xcontent")
-        "success"
-      } catch {
-        case error: Error => line
-        case exception: Exception => line
-      }
-    })
-    val errorXcontent: RDD[String] = dealXcontent.filter(line => line != "success")
-    val noErrorXcontent: RDD[String] = rdd2.subtract(errorXcontent)
 
-    val rdd3: RDD[String] = rdd1.union(noErrorXcontent)
+    val rdd3: RDD[String] = rdd1.union(rdd2)
 
     val rdd4: RDD[(String, String, String)] = rdd3.map(line => {
       val jsonObj = JSON.parseObject(line)
@@ -55,7 +40,6 @@ object BaiduxinDailyDataMerge {
     val rdd5: RDD[(String, Iterable[(String, String, String)])] = rdd4.groupBy(_._1)
 
     val rdd6: RDD[String] = rdd5.map(values => {
-      val key = values._1
       val lastTimeRecord: List[(String, String, String)] = values._2.toList.sortBy(_._2)(Ordering.String.reverse).take(1)
       val list: List[String] = lastTimeRecord.map(_._3)
       var str: String = ""
@@ -64,7 +48,19 @@ object BaiduxinDailyDataMerge {
       str
     })
 
-    rdd6.coalesce(10).saveAsTextFile(resultDataPath)
-    errorXcontent.coalesce(1).saveAsTextFile(errorXcontentDataPath)
+    val rdd7: RDD[(String, String)] = rdd6.map(line => {
+      val jsonObj = JSON.parseObject(line)
+      val xwhat = jsonObj.get("xwhat")
+      val key: String = "" + xwhat
+      (key, line)
+    })
+
+    //根据类别进行重分区，重分区后的rdd是键值对rdd，其中key是类别，value是完整数据，把value取出即可
+    val rdd8: RDD[(String, String)] = rdd7.partitionBy(new CategoryPartitionerV2)
+
+    val rdd9: RDD[String] = rdd8.map(line => line._2)
+
+    rdd9.saveAsTextFile(resultDataPath)
+
   }
 }
