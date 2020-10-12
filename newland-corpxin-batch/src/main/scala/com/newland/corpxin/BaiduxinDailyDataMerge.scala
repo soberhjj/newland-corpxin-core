@@ -20,6 +20,11 @@ object BaiduxinDailyDataMerge {
     val fullDataPath="obs://data-warehouse/ods/baiduxin/origin_events/"+fullDate+"/part-*"
     val resultDataPath="obs://data-warehouse/ods/baiduxin/origin_events/"+incrementDate
 
+    //本机虚拟机搭建的集群（即测试环境）的数据存储相关路径
+//    val incrementDataPath="hdfs://master:9000/staging/baiduxin/origin_events/"+incrementDate+"/flume.*"
+//    val fullDataPath="hdfs://master:9000/ods/baiduxin/origin_events/"+fullDate+"/part-*"
+//    val resultDataPath="hdfs://master:9000/ods/baiduxin/origin_events/"+incrementDate
+
     //以旧的完整版数据创建RDD
     val rdd1: RDD[String] = sc.textFile(fullDataPath)
 

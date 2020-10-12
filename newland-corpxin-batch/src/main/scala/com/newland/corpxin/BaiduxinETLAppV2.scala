@@ -21,13 +21,12 @@ object BaiduxinETLAppV2 {
     val sparkConf: SparkConf = new SparkConf()
       .setAppName("BaiduxinETLToHive")
       //设置序列化方式。spark默认的是org.apache.spark.serializer.JavaSerializer。而我们要修改成org.apache.spark.serializer.KryoSerializer。后者序列化后的数据更小。修改序列化方式可视为一种优化手段。
-      .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
-      .set("spark.kryo.registrator", "com.newland.corpxin.model.MyRegistrator")
-      .set("spark.kryoserializer.buffer.max", "1024m")
-      .set("spark.kryo.registrationRequired", "false")
+//      .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+//      .set("spark.kryo.registrator", "com.newland.corpxin.model.MyRegistrator")
+//      .set("spark.kryoserializer.buffer.max", "1024m")
+//      .set("spark.kryo.registrationRequired", "false")
     val spark: SparkSession = SparkSession.builder().config(sparkConf).enableHiveSupport().getOrCreate()
     val sc: SparkContext = spark.sparkContext
-    sc.setLogLevel("ERROR")
 
     // TODO shell脚本入参日期，如20200730
     val dateTime: String = args(0)
@@ -64,7 +63,7 @@ object BaiduxinETLAppV2 {
         }
       }
       Opennotice2(opennoticeOBJ.`corpId`, opennoticeOBJ.`hearingDate`, opennoticeOBJ.`caseNo`, opennoticeOBJ.`caseReason`, opennoticeOBJ.`judge`, opennoticeOBJ.`court`, opennoticeOBJ.`tribunal`, arrPlaintiff.toArray, arrDefendant.toArray, opennoticeOBJ.`ename`, opennoticeOBJ.`pureRole`, opennoticeOBJ.`dataId`, opennoticeOBJ.`content`, opennoticeOBJ.`region`, opennoticeOBJ.`department`, opennoticeOBJ.`author`, opennoticeOBJ.`judgeType`, opennoticeOBJ.`detailUrl`, opennoticeOBJ.`ds`)
-    }).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_opennotice")
+    }).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_opennotice")
 
     //处理baiduxin_focalPoint_filinginfo类别的数据
     val filinginfoRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00001")
@@ -110,7 +109,7 @@ object BaiduxinETLAppV2 {
           }
         }
         Filinginfo2(filinginfoOBJ.`corpId`, filinginfoOBJ.`date`, filinginfoOBJ.`caseNumber`, filinginfoOBJ.`court`, arrMapPlaintiff.toArray, arrMapDefendant.toArray, filinginfoOBJ.`filingInfoId`, filinginfoOBJ.`detailUrl`, filinginfoOBJ.`ds`)
-      }).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_filinginfo")
+      }).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_filinginfo")
 
     //处理baiduxin_basicData_basicData类别的数据
     val basicDataRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00002")
@@ -137,7 +136,7 @@ object BaiduxinETLAppV2 {
           }
         }
         Basicdata2(basicDataOBJ.`corpId`, basicDataOBJ.`prevEntName`, basicDataOBJ.`startDate`, basicDataOBJ.`authority`, basicDataOBJ.`legalPerson`, basicDataOBJ.`licenseNumber`, basicDataOBJ.`district`, basicDataOBJ.`scope`, basicDataOBJ.`openStatus`, basicDataOBJ.`taxNo`, basicDataOBJ.`entType`, basicDataOBJ.`annualDate`, basicDataOBJ.`realCapital`, basicDataOBJ.`industry`, basicDataOBJ.`unifiedCode`, basicDataOBJ.`openTime`, basicDataOBJ.`regAddr`, basicDataOBJ.`regCapital`, basicDataOBJ.`orgNo`, basicDataOBJ.`addr`, basicDataOBJ.`aifanfanJumpUrl`, basicDataOBJ.`benchMark`, basicDataOBJ.`claimUrl`, basicDataOBJ.`compNum`, basicDataOBJ.`compNumLink`, basicDataOBJ.`describe`, basicDataOBJ.`districtCode`, basicDataOBJ.`email`, basicDataOBJ.`entLogo`, basicDataOBJ.`entLogoWord`, basicDataOBJ.`entName`, basicDataOBJ.`isClaim`, basicDataOBJ.`isCollected`, labelsMap, basicDataOBJ.`noRzvip`, basicDataOBJ.`oldEntName`, basicDataOBJ.`orgType`, basicDataOBJ.`paidinCapital`, basicDataOBJ.`personId`, basicDataOBJ.`personLink`, basicDataOBJ.`personLogo`, basicDataOBJ.`personLogoWord`, basicDataOBJ.`prinType`, basicDataOBJ.`scale`, basicDataOBJ.`shareLogo`, basicDataOBJ.`telephone`, basicDataOBJ.`regNo`, basicDataOBJ.`website`, basicDataOBJ.`analyse_website`, basicDataOBJ.`ds`)
-      }).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_basicData_basicData")
+      }).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_basicData_basicData")
 
 
     //处理baiduxin_basicData_holdsData类别的数据
@@ -153,7 +152,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_basicData_holdsData")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_basicData_holdsData")
 
     //处理baiduxin_focalPoint_taxviolation类别的数据
     val taxviolationRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00004")
@@ -168,7 +167,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_taxviolation")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_taxviolation")
 
     //处理baiduxin_focalPoint_simplecancellation类别的数据
     val simplecancellationRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00005")
@@ -213,7 +212,7 @@ object BaiduxinETLAppV2 {
         }
       }
       Simplecancellation2(simplecancellationOBJ.`corpId`, simplecancellationOBJ.`entName`, simplecancellationOBJ.`creditNo`, simplecancellationOBJ.`noticePeriodDate`, simplecancellationOBJ.`departMent`, arrMapObjections.toArray, simplecancellationOBJ.`cancelId`, simplecancellationOBJ.`cancelImageUrl`, simplecancellationOBJ.`detailUrl`, arrMapResult.toArray, simplecancellationOBJ.`ds`)
-    }).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_simplecancellation")
+    }).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_simplecancellation")
 
     //处理baiduxin_focalPoint_terminationcase类别的数据
     val terminationcaseRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00006")
@@ -228,7 +227,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_terminationcase")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_terminationcase")
 
     //处理baiduxin_focalPoint_stockFreeze类别的数据
     val stockFreezeRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00007")
@@ -243,7 +242,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_stockFreeze")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_stockFreeze")
 
     //处理baiduxin_focalPoint_restrictedConsumer类别的数据
     val restrictedConsumerRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00008")
@@ -258,7 +257,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_restrictedConsumer")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_restrictedConsumer")
 
     //处理baiduxin_focalPoint_penalties类别的数据
     val penaltiesRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00009")
@@ -273,7 +272,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_penalties")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_penalties")
 
 
     //处理baiduxin_basicData_branchsData类别的数据
@@ -289,7 +288,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_basicData_branchsData")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_basicData_branchsData")
 
     //处理baiduxin_basicData_changeRecordData类别的数据
     val changeRecordDataRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00011")
@@ -304,7 +303,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_basicData_changeRecordData")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_basicData_changeRecordData")
 
     //处理baiduxin_basicData_directorsData类别的数据
     val directorsDataRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00012")
@@ -319,7 +318,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_basicData_directorsData")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_basicData_directorsData")
 
     //处理baiduxin_basicData_headCompany类别的数据
     val headCompanyRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00013")
@@ -334,7 +333,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_basicData_headCompany")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_basicData_headCompany")
 
     //处理baiduxin_basicData_investRecordData类别的数据
     val investRecordDataRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00014")
@@ -349,7 +348,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_basicData_investRecordData")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_basicData_investRecordData")
 
     //处理baiduxin_basicData_shareholdersData类别的数据
     val shareholdersDataRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00015")
@@ -364,7 +363,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_basicData_shareholdersData")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_basicData_shareholdersData")
 
     //处理baiduxin_basicData_annualReportData类别的数据
     val annualReportDataRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00016")
@@ -379,7 +378,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_basicData_annualReportData")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_basicData_annualReportData")
 
     //处理baiduxin_compManage_doublecheckup类别的数据
     val doublecheckupRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00017")
@@ -394,7 +393,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_compManage_doublecheckup")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_compManage_doublecheckup")
 
     //处理baiduxin_compManage_foodquality类别的数据
     val foodqualityRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00018")
@@ -423,7 +422,7 @@ object BaiduxinETLAppV2 {
         }
         Foodquality2(foodqualityOBJ.`corpId`, foodqualityOBJ.`detailUrl`, foodqualityOBJ.`insId`, foodqualityOBJ.`notificationDate`, foodqualityOBJ.`notificationNum`, foodqualityOBJ.`productName`,
           foodqualityOBJ.`qualityId`, foodqualityOBJ.`result`, foodqualityOBJ.`type`, detailMap, foodqualityOBJ.`ds`)
-      }).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_compManage_foodquality")
+      }).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_compManage_foodquality")
 
     //处理baiduxin_compManage_license类别的数据
     val licenseRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00019")
@@ -438,7 +437,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_compManage_license")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_compManage_license")
 
     //处理baiduxin_compManage_quality类别的数据
     val qualityRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00020")
@@ -466,7 +465,7 @@ object BaiduxinETLAppV2 {
           }
         }
         Quality2(qualityOBJ.`corpId`, qualityOBJ.`samlingYears`, qualityOBJ.`samlingBatch`, qualityOBJ.`productName`, qualityOBJ.`samplingResult`, qualityOBJ.`detailUrl`, qualityOBJ.`insId`, qualityOBJ.`qualityId`, qualityOBJ.`type`, detailMap, qualityOBJ.`ds`)
-      }).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_compManage_quality")
+      }).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_compManage_quality")
 
     //处理baiduxin_compManage_randominspection类别的数据
     val randominspectionRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00021")
@@ -481,7 +480,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_compManage_randominspection")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_compManage_randominspection")
 
     //处理baiduxin_intellectualProperty_copyright类别的数据
     val copyrightRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00022")
@@ -509,7 +508,7 @@ object BaiduxinETLAppV2 {
           }
         }
         Copyright2(copyrightOBJ.`corpId`, copyrightOBJ.`softwareName`, copyrightOBJ.`shortName`, copyrightOBJ.`batchNum`, copyrightOBJ.`softwareType`, copyrightOBJ.`typeCode`, copyrightOBJ.`regDate`, copyrightOBJ.`softId`, copyrightOBJ.`detailUrl`, detailMap, copyrightOBJ.`ds`)
-      }).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_intellectualProperty_copyright")
+      }).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_intellectualProperty_copyright")
 
     //处理baiduxin_intellectualProperty_icpinfo类别的数据
     val icpinfoRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00023")
@@ -539,7 +538,7 @@ object BaiduxinETLAppV2 {
           }
         }
         Icpinfo2(icpinfoOBJ.`corpId`, icpinfoOBJ.`siteName`, arrHomesite.toArray, arrdomain.toArray, icpinfoOBJ.`icpNo`, icpinfoOBJ.`ds`)
-      }).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_intellectualProperty_icpinfo")
+      }).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_intellectualProperty_icpinfo")
 
     //处理baiduxin_intellectualProperty_mark类别的数据
     val markRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00024")
@@ -554,7 +553,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_intellectualProperty_mark")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_intellectualProperty_mark")
 
     //处理baiduxin_intellectualProperty_patent类别的数据
     val patentRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00025")
@@ -569,7 +568,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_intellectualProperty_patent")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_intellectualProperty_patent")
 
     //处理baiduxin_focalPoint_equitypledge类别的数据
     val equitypledgeRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00026")
@@ -584,7 +583,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_equitypledge")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_equitypledge")
 
     //处理baiduxin_focalPoint_discredit类别的数据
     val discreditRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00027")
@@ -599,7 +598,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_discredit")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_discredit")
 
     //处理baiduxin_focalPoint_clearaccount类别的数据
     val clearaccountRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00028")
@@ -614,7 +613,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_clearaccount")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_clearaccount")
 
     //处理baiduxin_focalPoint_lawWenshu类别的数据
     val lawWenshuRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00029")
@@ -629,7 +628,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_lawWenshu")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_lawWenshu")
 
     //处理baiduxin_focalPoint_chattelmortgage类别的数据
     val chattelmortgageRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00030")
@@ -644,7 +643,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_chattelmortgage")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_chattelmortgage")
 
     //处理baiduxin_intellectualProperty_workright类别的数据
     val workrightRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00031")
@@ -659,7 +658,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_intellectualProperty_workright")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_intellectualProperty_workright")
 
     //处理baiduxin_focalPoint_executedPerson类别的数据
     val executedPersonRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00032")
@@ -674,7 +673,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_executedPerson")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_executedPerson")
 
     //处理baiduxin_focalPoint_abnormal类别的数据
     val abnormalRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00033")
@@ -689,7 +688,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_abnormal")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_abnormal")
 
     //处理baiduxin_focalPoint_getCourtNoticeData类别的数据
     val getCourtNoticeDataRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00034")
@@ -722,7 +721,7 @@ object BaiduxinETLAppV2 {
           }
         }
         Getcourtnoticedata2(getCourtNoticeDataOBJ.`corpId`, getCourtNoticeDataOBJ.date, getCourtNoticeDataOBJ.`type`, getCourtNoticeDataOBJ.`cause`, getCourtNoticeDataOBJ.`courtnoticeId`, getCourtNoticeDataOBJ.`court`, arrMapPeople.toArray, getCourtNoticeDataOBJ.`detailUrl`, getCourtNoticeDataOBJ.`ds`)
-      }).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_getCourtNoticeData")
+      }).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_getCourtNoticeData")
 
     //处理baiduxin_focalPoint_illegal类别的数据
     val illegalRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00035")
@@ -737,7 +736,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_illegal")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_illegal")
 
     //处理baiduxin_focalPoint_judicialauction类别的数据
     val judicialauctionRDD: RDD[String] = sc.textFile(Constant.SPARK_INPUT_PATH + dateTime + "/part-00036")
@@ -752,7 +751,7 @@ object BaiduxinETLAppV2 {
         data.`ds` = dateTime
         data
       }
-    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto("ods_baiduxin_db.ods_baiduxin_focalPoint_judicialauction")
+    }).flatMap(line=>line).toDF().write.mode("overwrite").insertInto(Constant.DB+".ods_baiduxin_focalPoint_judicialauction")
 
   }
 }
